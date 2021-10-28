@@ -27,3 +27,8 @@ x86_64 = "0.14.2"
 [dependencies.lazy_static]
 features = ["spin_no_std"]
 version = "1.0"
+
+
+[[test]]
+name = "stack_overflow"
+harness = false

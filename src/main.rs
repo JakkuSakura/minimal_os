@@ -14,7 +14,9 @@ fn print_message() {
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    init();
     print_message();
+    
     #[cfg(test)]
     test_main();
     panic!("I like panic!");
@@ -30,18 +32,4 @@ fn panic(info: &PanicInfo) -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     test::test_panic_handler(info)
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test_case]
-    fn test_1_plus_1() {
-        serial_println!("Evaluating 1 + 1");
-        assert_eq!(1 + 1, 2);
-    }
-    #[test_case]
-    fn test_1_plus_1_fail() {
-        serial_println!("Evaluating 1 + 1");
-        assert_eq!(1 + 1, 3);
-    }
 }

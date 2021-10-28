@@ -48,6 +48,7 @@ where
 #[cfg(test)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    init();
     test_main();
     loop {}
 }
@@ -56,4 +57,19 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     test_panic_handler(info)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test_case]
+    fn test_1_plus_1() {
+        assert_eq!(1 + 1, 2);
+    }
+
+    #[test_case]
+    fn test_breakpoint_exception() {
+        // invoke a breakpoint exception
+        x86_64::instructions::interrupts::int3();
+    }
 }
