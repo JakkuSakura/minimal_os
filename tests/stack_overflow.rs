@@ -57,5 +57,5 @@ extern "x86-interrupt" fn test_double_fault_handler(
 ) -> ! {
     serial_println!("[ok]");
     test::exit_qemu(test::QemuExitCode::Success);
-    loop {}
+    hlt_loop()
 }

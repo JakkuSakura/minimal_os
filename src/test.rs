@@ -27,7 +27,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
+    hlt_loop()
 }
 
 pub trait Testable {
@@ -50,7 +50,7 @@ where
 pub extern "C" fn _start() -> ! {
     init();
     test_main();
-    loop {}
+    hlt_loop()
 }
 
 #[cfg(test)]
@@ -61,7 +61,7 @@ fn panic(info: &PanicInfo) -> ! {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
     #[test_case]
     fn test_1_plus_1() {
         assert_eq!(1 + 1, 2);
