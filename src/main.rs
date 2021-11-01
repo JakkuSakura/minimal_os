@@ -12,7 +12,7 @@ use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 use minimal_os::allocator::init_heap;
 use minimal_os::memory::{active_level_4_table, BootInfoFrameAllocator};
-use x86_64::structures::paging::{Page, Translate};
+use x86_64::structures::paging::Translate;
 use x86_64::VirtAddr;
 
 fn print_message() {

@@ -49,7 +49,7 @@ where
 entry_point!(kernel_main);
 
 #[cfg(test)]
-fn kernel_main() -> ! {
+fn kernel_main(_: &'static bootloader::BootInfo) -> ! {
     init();
 
     test_main();
