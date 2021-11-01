@@ -4,19 +4,22 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(crate::test::test_runner)]
 #![reexport_test_harness_main = "test_main"]
-#![feature(alloc_error_handler)] // at the top of the file
+#![feature(alloc_error_handler)]
+#![feature(once_cell)]
+
+extern crate alloc;
 
 use core::panic::PanicInfo;
 
 pub mod allocator;
 pub mod gdt;
 pub mod interrupts;
+pub mod keyboard;
 pub mod memory;
 pub mod serial;
 pub mod test;
 pub mod vga;
 
-extern crate alloc;
 pub fn init() {
     gdt::init();
     interrupts::init_idt();

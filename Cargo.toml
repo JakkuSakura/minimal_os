@@ -26,12 +26,25 @@ x86_64 = "0.14.2"
 pic8259 = "0.10.1"
 pc-keyboard = "0.5.0"
 linked_list_allocator = "0.9.0"
+minimal-executor = { version = "0.3", default-features = false }
 
+[dependencies.conquer-once]
+version = "0.2.0"
+default-features = false
+
+[dependencies.crossbeam]
+version = "*"
+default-features = false
+features = ["alloc"]
 
 [dependencies.lazy_static]
 features = ["spin_no_std"]
 version = "1.0"
 
+[dependencies.futures]
+version = "*"
+default-features = false
+features = ["alloc"]
 
 [[test]]
 name = "stack_overflow"
