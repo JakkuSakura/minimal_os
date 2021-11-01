@@ -54,19 +54,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ae5588f6b3c3cb05239e90bd110f257254aecd01e4635400391aeae07497845"
 dependencies = [
  "cfg-if",
- "crossbeam-channel",
  "crossbeam-epoch",
  "crossbeam-queue",
  "crossbeam-utils",
-]
-
-[[package]]
-name = "crossbeam-channel"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06ed27e177f16d65f0f0c22a213e17c696ace5dd64b14258b52f9417ccb52db4"
-dependencies = [
- "cfg-if",
 ]
 
 [[package]]
@@ -199,16 +189,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "minimal-executor"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69850123d489f957e8102017262e7ed2b26cc2653f8460064a1bb3bad68c31a4"
-dependencies = [
- "crossbeam",
- "futures",
-]
-
-[[package]]
 name = "minimal_os"
 version = "0.1.0"
 dependencies = [
@@ -218,7 +198,6 @@ dependencies = [
  "futures",
  "lazy_static",
  "linked_list_allocator",
- "minimal-executor",
  "pc-keyboard",
  "pic8259",
  "spin",

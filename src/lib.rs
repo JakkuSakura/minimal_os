@@ -17,6 +17,7 @@ pub mod interrupts;
 pub mod keyboard;
 pub mod memory;
 pub mod serial;
+pub mod task;
 pub mod test;
 pub mod vga;
 

@@ -7,13 +7,13 @@ extern crate alloc;
 
 use minimal_os::*;
 
-use alloc::boxed::Box;
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use minimal_executor::LocalPool;
 use minimal_os::allocator::init_heap;
 use minimal_os::keyboard::print_keypresses;
 use minimal_os::memory::BootInfoFrameAllocator;
+use minimal_os::task::executor::Executor;
+use minimal_os::task::Task;
 use x86_64::VirtAddr;
 
 entry_point!(kernel_main);
@@ -25,15 +25,13 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
     init_heap(&mut mapper, &mut frame_allocator).expect("Heap allocation error");
 
-    let mut executor: LocalPool<()> = minimal_executor::LocalPool::new();
+    let mut executor = Executor::new();
 
-    executor.spawn(Box::pin(print_keypresses()));
-
-    executor.run();
+    executor.spawn(Task::new(print_keypresses()));
 
     #[cfg(test)]
     test_main();
-    hlt_loop()
+    executor.run()
 }
 #[cfg(not(test))]
 #[panic_handler]
