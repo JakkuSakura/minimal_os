@@ -83,8 +83,13 @@ impl Executor {
         }
     }
     fn sleep_if_idle(&self) {
+        use x86_64::instructions::interrupts::{self, enable_and_hlt};
+
+        interrupts::disable();
         if self.task_queue.is_empty() {
-            x86_64::instructions::hlt();
+            enable_and_hlt();
+        } else {
+            interrupts::enable();
         }
     }
 }
