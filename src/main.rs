@@ -3,11 +3,14 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(minimal_os::test::test_runner)]
 #![reexport_test_harness_main = "test_main"]
+extern crate alloc;
 
 use minimal_os::*;
 
+use alloc::boxed::Box;
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
+use minimal_os::allocator::init_heap;
 use minimal_os::memory::{active_level_4_table, BootInfoFrameAllocator};
 use x86_64::structures::paging::{Page, Translate};
 use x86_64::VirtAddr;
@@ -33,7 +36,6 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
-
     let addresses = [
         // the identity-mapped vga buffer page
         0xb8000,
@@ -50,14 +52,9 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
         println!("{:?} -> {:?}", virt, phys);
     }
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
+    init_heap(&mut mapper, &mut frame_allocator).expect("Heap allocation error");
 
-    // map an unused page
-    let page = Page::containing_address(VirtAddr::new(0));
-    memory::create_example_mapping(page, &mut mapper, &mut frame_allocator);
-
-    // write the string `New!` to the screen through the new mapping
-    let page_ptr: *mut u64 = page.start_address().as_mut_ptr();
-    unsafe { page_ptr.offset(400).write_volatile(0x_f021_f077_f065_f04e) };
+    drop(Box::new(42));
 
     #[cfg(test)]
     test_main();
