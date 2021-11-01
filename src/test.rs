@@ -1,5 +1,6 @@
 use crate::*;
-
+#[cfg(test)]
+use bootloader::entry_point;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
 pub enum QemuExitCode {
@@ -44,11 +45,13 @@ where
         serial_println!("[ok]");
     }
 }
+#[cfg(test)]
+entry_point!(kernel_main);
 
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn kernel_main() -> ! {
     init();
+
     test_main();
     hlt_loop()
 }
