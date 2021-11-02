@@ -7,7 +7,7 @@ use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::future::Ready;
 use core::pin::Pin;
-use core::task::Poll;
+use core::task::{Context, Poll};
 use spin::RwLockWriteGuard;
 
 pub(crate) struct MemFileInner {
@@ -105,7 +105,11 @@ pub struct MemFile {
 impl AsyncWrite for MemFile {
     type Error = ();
 
-    fn poll_write(mut self: Pin<&mut Self>, buf: &[u8]) -> Poll<Result<usize, Self::Error>> {
+    fn poll_write(
+        mut self: Pin<&mut Self>,
+        _cx: Context<'_>,
+        buf: &[u8],
+    ) -> Poll<Result<usize, Self::Error>> {
         let this = &mut *self;
         let mut file = this.file.as_file().unwrap().content.write();
         if this.write_cursor + buf.len() < file.len() {
@@ -116,11 +120,11 @@ impl AsyncWrite for MemFile {
         Poll::Ready(Ok(buf.len()))
     }
 
-    fn poll_flush(self: Pin<&mut Self>) -> Poll<Result<(), Self::Error>> {
+    fn poll_flush(self: Pin<&mut Self>, _cx: Context<'_>) -> Poll<Result<(), Self::Error>> {
         Poll::Ready(Ok(()))
     }
 
-    fn poll_close(self: Pin<&mut Self>) -> Poll<Result<(), Self::Error>> {
+    fn poll_close(self: Pin<&mut Self>, _cx: Context<'_>) -> Poll<Result<(), Self::Error>> {
         Poll::Ready(Ok(()))
     }
 }
@@ -128,10 +132,16 @@ impl AsyncWrite for MemFile {
 impl AsyncRead for MemFile {
     type Error = ();
 
-    fn poll_read(mut self: Pin<&mut Self>, buf: &mut [u8]) -> Poll<Result<usize, Self::Error>> {
+    fn poll_read(
+        mut self: Pin<&mut Self>,
+        cx: Context<'_>,
+        buf: &mut [u8],
+    ) -> Poll<Result<usize, Self::Error>> {
         let this = &mut *self;
         let file = this.file.as_file().unwrap().content.read();
         if this.read_cursor > file.len() {
+            // TODO: update notice
+            cx.waker().wake_by_ref();
             return Poll::Pending;
         } else {
             let len = core::cmp::min(buf.len(), file.len() - this.read_cursor);
