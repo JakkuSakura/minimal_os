@@ -49,8 +49,8 @@ where
 entry_point!(kernel_main);
 
 #[cfg(test)]
-fn kernel_main(_: &'static bootloader::BootInfo) -> ! {
-    init();
+fn kernel_main(boot_info: &'static bootloader::BootInfo) -> ! {
+    init(boot_info);
 
     test_main();
     hlt_loop()
